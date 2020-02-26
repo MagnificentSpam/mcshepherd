@@ -1,6 +1,4 @@
 import discord
-import threading
-import asyncio
 
 
 class DiscordConnection(discord.Client):
@@ -23,8 +21,6 @@ class DiscordConnection(discord.Client):
             else:
                 instance.send_chat(msg.author.display_name, msg.content)
                 print(f'Sending message from {msg.author.display_name} to {instance.name}')
-        else:
-            print(f'Ignoring message from {msg.author.display_name} in {msg.channel.name}')
 
     def register_instance(self, chid, instance):
         self.instances[chid] = instance

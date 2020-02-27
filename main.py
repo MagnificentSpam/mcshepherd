@@ -18,7 +18,8 @@ def run_shepherd(config):
     disc = DiscordConnection()
     for name, conf in config.get_instances():
         print(f'Creating instance {name}')
-        running[name] = MinecraftInstance(name, conf['path'], conf['chid'], disc, ops=conf.get('ops'))
+        mem = conf.get('mem') or 1024
+        running[name] = MinecraftInstance(name, conf['path'], conf['chid'], disc, ops=conf.get('ops'), mem=mem)
         running[name].start()
         disc.register_instance(conf['chid'], running[name])
     disc.loop.run_until_complete(disc.login(config.get_discord_token()))

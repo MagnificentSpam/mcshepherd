@@ -29,10 +29,10 @@ class MinecraftInstance(threading.Thread):
                     text = m.group('text')
                     self.disc.send_mc_message(self.chid, f'{author}: {text}')
                     continue
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: There are (?P<amount>\d+) of a max (?P<max>\d+) players online:(?P<users>[\w ]*)', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: There are (?P<amount>\d+) of a max (?P<max>\d+) players online:(?P<users>[\w, ]*)', line)
                 if m:
                     amount = int(m.group('amount'))
-                    users = m.group('users').strip().split(' ')
+                    users = m.group('users').strip().split(', ')
                     topic = f'{amount} online'
                     if amount:
                         topic += ': ' + ' '.join(users)
@@ -44,7 +44,7 @@ class MinecraftInstance(threading.Thread):
                     user = m.group('user')
                     action = m.group('action')
                     msg = f'**{user} {action}**'
-                    asyncio.run_coroutine_threadsafe(self.disc.get_channel(self.chid).send(msg), self.disc.loop)
+                    # asyncio.run_coroutine_threadsafe(self.disc.get_channel(self.chid).send(msg), self.disc.loop)
                     with self._wlock:
                         self.process.stdin.write(b'list\n')
                         self.process.stdin.flush()
@@ -53,8 +53,8 @@ class MinecraftInstance(threading.Thread):
                 print(f'UnicodeDecodeError on instance {self.name}: {line}')
 
     def send_chat(self, name, text):
-        text = json.dumps(text)
-        cmd = f'tellraw @a {{"text":"<{name}> {text}"}}\n'
+        text = json.dumps(f'<{name}> {text}')
+        cmd = f'tellraw @a {{"text": {text}}}\n'
         with self._wlock:
             self.process.stdin.write(cmd.encode('utf-8'))
             self.process.stdin.flush()

@@ -29,7 +29,7 @@ class MinecraftInstance(threading.Thread):
                     text = m.group('text')
                     self.disc.send_mc_message(self.chid, f'{author}: {text}')
                     continue
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: There are (?P<amount>\d+) of a max (?P<max>\d+) players online:(?P<users>[\w, ]*)', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: There are (?P<amount>\d+) of a max( of)? (?P<max>\d+) players online:(?P<users>[\w, ]*)', line)
                 if m:
                     amount = int(m.group('amount'))
                     users = m.group('users').strip().split(', ')

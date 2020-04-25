@@ -23,13 +23,13 @@ class MinecraftInstance(threading.Thread):
         for line in self.process.stdout:
             try:
                 line = line.decode('utf-8').rstrip('\n')
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: <(?P<author>\w+)> (?P<text>.*)', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]( \[minecraft/DedicatedServer\])?: <(?P<author>\w+)> (?P<text>.*)', line)
                 if m:
                     author = m.group('author')
                     text = m.group('text')
                     self.disc.send_mc_message(self.chid, f'{author}: {text}')
                     continue
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: There are (?P<amount>\d+) of a max( of)? (?P<max>\d+) players online:(?P<users>[\w, ]*)', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]( \[minecraft/DedicatedServer\])?: There are (?P<amount>\d+) of a max( of)? (?P<max>\d+) players online:(?P<users>[\w, ]*)', line)
                 if m:
                     amount = int(m.group('amount'))
                     users = m.group('users').strip().split(', ')
@@ -39,7 +39,7 @@ class MinecraftInstance(threading.Thread):
                     asyncio.run_coroutine_threadsafe(self.disc.get_channel(self.chid).edit(topic=topic), self.disc.loop)
                     print(f'Setting channel topic for {self.name} to {topic}')
                     continue
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]: (?P<user>\w+) (?P<action>joined|left) the game', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[Server thread\/INFO\]( \[minecraft/DedicatedServer\])?: (?P<user>\w+) (?P<action>joined|left) the game', line)
                 if m:
                     user = m.group('user')
                     action = m.group('action')

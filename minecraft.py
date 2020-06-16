@@ -23,7 +23,7 @@ class MinecraftInstance(threading.Thread):
         for line in self.process.stdout:
             try:
                 line = line.decode('utf-8').rstrip('\n')
-                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[(Server thread|Async Chat Thread - #\d)\/INFO\]( \[minecraft/DedicatedServer\])?: <(?P<author>\w+)> (?P<text>.*)', line)
+                m = re.match(r'\[(?P<time>\d\d:\d\d:\d\d)\] \[(Server thread|Async Chat Thread - #\d+)\/INFO\]( \[minecraft/DedicatedServer\])?: <(?P<author>\w+)> (?P<text>.*)', line)
                 if m:
                     author = m.group('author')
                     text = m.group('text')

@@ -23,17 +23,43 @@ class DiscordConnection(discord.Client):
                 instance.send_chat(msg.author.display_name, msg.content)
                 print(f'Sending message from {msg.author.display_name} to {instance.name}')
 
-    async def on_reaction_add(self, reaction, user):
-        if reaction.message.channel.id == 721487932606906399:
-            if type(reaction.emoji) == discord.emoji.Emoji and reaction.emoji.id == 721206165605974019:
-                role = discord.utils.get(user.guild.roles, id=721461067334680626)
+    async def on_raw_reaction_add(self, payload):
+        print(f'user {payload.user_id} reacted in {payload.channel_id} with {payload.emoji}')
+        if payload.channel_id == 721487932606906399:
+            ch = self.get_channel(payload.channel_id)
+            user = ch.guild.get_member(payload.user_id)
+            if payload.emoji.is_custom_emoji():
+                if payload.emoji.id == 721206165605974019:  # mc
+                    role = discord.utils.get(ch.guild.roles, id=721461067334680626)
+                    await user.add_roles(role)
+            elif payload.emoji.name == '🤢':  # nsfw
+                role = discord.utils.get(ch.guild.roles, id=721469067680022541)
                 await user.add_roles(role)
-            elif reaction.emoji == '🤢':
-                role = discord.utils.get(user.guild.roles, id=721469067680022541)
+            elif payload.emoji.name == '🔞':  # wasteland
+                role = discord.utils.get(ch.guild.roles, id=721469037753794560)
                 await user.add_roles(role)
-            elif reaction.emoji == '🔞':
-                role = discord.utils.get(user.guild.roles, id=721469037753794560)
+            elif payload.emoji.name == '🇧🇷':  # pt
+                role = discord.utils.get(ch.guild.roles, id=722963391316230194)
                 await user.add_roles(role)
+
+    async def on_raw_reaction_remove(self, payload):
+        print(f'user {payload.user_id} unreacted in {payload.channel_id} with {payload.emoji}')
+        if payload.channel_id == 721487932606906399:
+            ch = self.get_channel(payload.channel_id)
+            user = ch.guild.get_member(payload.user_id)
+            if payload.emoji.is_custom_emoji():
+                if payload.emoji.id == 721206165605974019:  # mc
+                    role = discord.utils.get(ch.guild.roles, id=721461067334680626)
+                    await user.remove_roles(role)
+            elif payload.emoji.name == '🤢':  # nsfw
+                role = discord.utils.get(ch.guild.roles, id=721469067680022541)
+                await user.remove_roles(role)
+            elif payload.emoji.name == '🔞':  # wasteland
+                role = discord.utils.get(ch.guild.roles, id=721469037753794560)
+                await user.remove_roles(role)
+            elif payload.emoji.name == '🇧🇷':  # pt
+                role = discord.utils.get(ch.guild.roles, id=722963391316230194)
+                await user.remove_roles(role)
 
     def send_mc_message(self, chid, msg):
         channel = self.get_channel(chid)

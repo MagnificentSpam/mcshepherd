@@ -28,11 +28,12 @@ class DiscordConnection(discord.Client):
                 await msg.channel.send(f'I\'m sorry, {msg.author.display_name}. I\'m afraid I can\'t do that. ')
                 return
             try:
-                user = msg.guild.fetch_member(int(args[0]))
+                user = await msg.guild.fetch_member(int(args[0]))
                 t = timeparse(' '.join(args[1:]))
                 self.add_blocked_user(user.id, t)
                 for rid in [721469067680022541, 721469037753794560]:
-                    await user.remove_roles(discord.utils.get(msg.guild.guild.roles, id=rid))
+                    await user.remove_roles(discord.utils.get(msg.guild.roles, id=rid))
+                await msg.channel.send(f'blocked {user.display_name} from nsfw channels for {t} seconds')
             except (discord.HTTPException, ValueError) as e:
                 await msg.channel.send(str(e))
         instance = self.instances.get(msg.channel.id)
@@ -56,7 +57,6 @@ class DiscordConnection(discord.Client):
                     await user.add_roles(role)
             elif payload.emoji.name == '🤢':  # wasteland
                 if self.is_user_blocked(user.id):
-                    ch = await self.fetch_channel(payload.channel_id)
                     msg = await ch.fetch_message(payload.message_id)
                     await msg.remove_reaction('🤢', user)
                 else:
@@ -64,7 +64,6 @@ class DiscordConnection(discord.Client):
                     await user.add_roles(role)
             elif payload.emoji.name == '🔞':  # nsfw
                 if self.is_user_blocked(user.id):
-                    ch = await self.fetch_channel(payload.channel_id)
                     msg = await ch.fetch_message(payload.message_id)
                     await msg.remove_reaction('🔞', user)
                 else:
@@ -115,21 +114,23 @@ class DiscordConnection(discord.Client):
         with open('blocked_users.json') as f:
             blocked_users = json.load(f)
         until = time.time() + t
-        blocked_users[uid] = t
+        blocked_users[str(uid)] = until
         with open('blocked_users.json', 'w') as f:
             json.dump(blocked_users, f)
 
     def is_user_blocked(self, uid):
         with open('blocked_users.json') as f:
             blocked_users = json.load(f)
-        until = blocked_users.get(uid)
+        until = blocked_users.get(str(uid))
         if until:
+            print(f'{uid} blocked until {until} ({until - time.time()} more s)')
             if until > time.time():
                 return True
             else:
-                del blocked_users[uid]
+                del blocked_users[str(uid)]
                 with open('blocked_users.json', 'w') as f:
                     json.dump(blocked_users, f)
+                return False
         else:
             return False
 

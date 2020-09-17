@@ -15,7 +15,7 @@ atexit.register(exit_handler)
 
 
 def run_shepherd(config):
-    disc = DiscordConnection()
+    disc = DiscordConnection(config)
     for name, conf in config.get_instances():
         print(f'Creating instance {name}')
         mem = conf.get('mem') or 1024

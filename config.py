@@ -11,3 +11,6 @@ class Config:
     def get_instances(self):
         for name, instance in self.conf['instances'].items():
             yield name, instance
+
+    def get_moderator_roles(self):
+        return self.conf['roles']['moderators']

@@ -55,6 +55,9 @@ class DiscordConnection(discord.Client):
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)
                     await user.add_roles(role)
+            elif payload.emoji.name == '☕':  # adult-lounge
+                role = discord.utils.get(ch.guild.roles, id=768857774573617153)
+                await user.add_roles(role)
             elif payload.emoji.name == '🤢':  # wasteland
                 if self.is_user_blocked(user.id):
                     msg = await ch.fetch_message(payload.message_id)
@@ -82,6 +85,9 @@ class DiscordConnection(discord.Client):
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)
                     await user.remove_roles(role)
+            elif payload.emoji.name == '☕':  # adult-lounge
+                role = discord.utils.get(ch.guild.roles, id=768857774573617153)
+                await user.remove_roles(role)
             elif payload.emoji.name == '🤢':  # nsfw
                 role = discord.utils.get(ch.guild.roles, id=721469067680022541)
                 await user.remove_roles(role)

@@ -31,7 +31,7 @@ class DiscordConnection(discord.Client):
                 user = await msg.guild.fetch_member(int(args[0]))
                 t = timeparse(' '.join(args[1:]))
                 self.add_blocked_user(user.id, t)
-                for rid in [721469067680022541, 721469037753794560]:
+                for rid in [721469067680022541, 721469037753794560, 768857774573617153]:
                     await user.remove_roles(discord.utils.get(msg.guild.roles, id=rid))
                 await msg.channel.send(f'blocked {user.display_name} from nsfw channels for {t} seconds')
             except (discord.HTTPException, ValueError) as e:
@@ -55,9 +55,16 @@ class DiscordConnection(discord.Client):
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)
                     await user.add_roles(role)
-            elif payload.emoji.name == '☕':  # adult-lounge
-                role = discord.utils.get(ch.guild.roles, id=768857774573617153)
+            elif payload.emoji.name == '🤖':  # tech
+                role = discord.utils.get(ch.guild.roles, id=769767161258311741)
                 await user.add_roles(role)
+            elif payload.emoji.name == '☕':  # adult-lounge
+                if self.is_user_blocked(user.id):
+                    msg = await ch.fetch_message(payload.message_id)
+                    await msg.remove_reaction('☕', user)
+                else:
+                    role = discord.utils.get(ch.guild.roles, id=768857774573617153)
+                    await user.add_roles(role)
             elif payload.emoji.name == '🤢':  # wasteland
                 if self.is_user_blocked(user.id):
                     msg = await ch.fetch_message(payload.message_id)
@@ -85,6 +92,9 @@ class DiscordConnection(discord.Client):
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)
                     await user.remove_roles(role)
+            elif payload.emoji.name == '🤖':  # tech
+                role = discord.utils.get(ch.guild.roles, id=769767161258311741)
+                await user.remove_roles(role)
             elif payload.emoji.name == '☕':  # adult-lounge
                 role = discord.utils.get(ch.guild.roles, id=768857774573617153)
                 await user.remove_roles(role)

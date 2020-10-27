@@ -72,13 +72,6 @@ class DiscordConnection(discord.Client):
                 else:
                     role = discord.utils.get(ch.guild.roles, id=721469067680022541)
                     await user.add_roles(role)
-            elif payload.emoji.name == '🔞':  # nsfw
-                if self.is_user_blocked(user.id):
-                    msg = await ch.fetch_message(payload.message_id)
-                    await msg.remove_reaction('🔞', user)
-                else:
-                    role = discord.utils.get(ch.guild.roles, id=721469037753794560)
-                    await user.add_roles(role)
             elif payload.emoji.name == '🇧🇷':  # pt
                 role = discord.utils.get(ch.guild.roles, id=722963391316230194)
                 await user.add_roles(role)
@@ -101,8 +94,6 @@ class DiscordConnection(discord.Client):
             elif payload.emoji.name == '🤢':  # nsfw
                 role = discord.utils.get(ch.guild.roles, id=721469067680022541)
                 await user.remove_roles(role)
-            elif payload.emoji.name == '🔞':  # wasteland
-                role = discord.utils.get(ch.guild.roles, id=721469037753794560)
                 await user.remove_roles(role)
             elif payload.emoji.name == '🇧🇷':  # pt
                 role = discord.utils.get(ch.guild.roles, id=722963391316230194)

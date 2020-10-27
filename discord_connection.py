@@ -50,7 +50,7 @@ class DiscordConnection(discord.Client):
         print(f'user {payload.user_id} reacted in {payload.channel_id} with {payload.emoji}')
         if payload.channel_id == 721487932606906399:
             ch = self.get_channel(payload.channel_id)
-            user = ch.guild.get_member(payload.user_id)
+            user = ch.guild.get_member(payload.user_id) or await ch.guild.fetch_member(payload.user_id)
             if payload.emoji.is_custom_emoji():
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)
@@ -80,7 +80,7 @@ class DiscordConnection(discord.Client):
         print(f'user {payload.user_id} unreacted in {payload.channel_id} with {payload.emoji}')
         if payload.channel_id == 721487932606906399:
             ch = self.get_channel(payload.channel_id)
-            user = ch.guild.get_member(payload.user_id)
+            user = ch.guild.get_member(payload.user_id) or await ch.guild.fetch_member(payload.user_id)
             if payload.emoji.is_custom_emoji():
                 if payload.emoji.id == 721206165605974019:  # mc
                     role = discord.utils.get(ch.guild.roles, id=721461067334680626)

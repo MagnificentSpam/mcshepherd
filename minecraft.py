@@ -2,7 +2,6 @@ import subprocess
 import re
 import threading
 import asyncio
-import discord.utils
 import json
 
 

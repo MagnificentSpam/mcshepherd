@@ -29,11 +29,10 @@ class DiscordConnection(discord.Client):
         parts = []
         for word in msg.split(' '):
             if word.startswith('@'):
-                name = word[1:].lower()
-                for member in channel.members:
-                    if member.display_name.lower().startswith(name):
-                        word = member.mention
-                        break
+                name = word[1:]
+                member = channel.guild.get_member_named(name)
+                if member:
+                    word = member.mention
                 else:
                     word = discord.utils.escape_markdown(word)
             else:
